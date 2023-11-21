@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Random;
 
@@ -42,7 +43,13 @@ public class BadIOGUI {
         final JPanel canvas = new JPanel();
         canvas.setLayout(new BorderLayout());
         final JButton write = new JButton("Write on file");
-        canvas.add(write, BorderLayout.CENTER);
+        final JPanel newCanvas = new JPanel();
+        final JButton read = new JButton("Read");
+        newCanvas.setLayout(new BoxLayout(newCanvas, BoxLayout.X_AXIS));
+        canvas.add(newCanvas, BorderLayout.CENTER);
+        newCanvas.add(write);
+        newCanvas.add(read);
+        //canvas.add(write, BorderLayout.CENTER);
         frame.setContentPane(canvas);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         /*
@@ -66,6 +73,20 @@ public class BadIOGUI {
                 }
             }
         });
+        read.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    final String string = Files.readString(new File(PATH).toPath());
+                    System.out.println(string);
+                } catch (IOException e2) {
+                    JOptionPane.showMessageDialog(frame, e2, "Error", JOptionPane.ERROR_MESSAGE);
+                    e2.printStackTrace(); // NOPMD: allowed as this is just an exercise
+                }
+            }
+            
+        });
     }
 
     private void display() {
@@ -81,6 +102,7 @@ public class BadIOGUI {
         final int sw = (int) screen.getWidth();
         final int sh = (int) screen.getHeight();
         frame.setSize(sw / PROPORTION, sh / PROPORTION);
+        frame.pack();
         /*
          * Instead of appearing at (0,0), upper left corner of the screen, this
          * flag makes the OS window manager take care of the default positioning
